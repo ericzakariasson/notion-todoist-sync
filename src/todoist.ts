@@ -1,5 +1,6 @@
 import { TodoistApi } from "@doist/todoist-api-typescript";
-import { addMinutes, isWithinInterval } from "date-fns";
+import { isWithinInterval } from "date-fns";
+import fetch from "node-fetch";
 import { env } from "./environment";
 
 export const todoist = new TodoistApi(env.TODOIST_TOKEN);

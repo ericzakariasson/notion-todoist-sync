@@ -29,6 +29,8 @@ async function main() {
   const from = addMinutes(NOW, -MINUTES);
   const to = NOW;
 
+  console.log(from, to);
+
   const events = await getActivityLogEvents(from, to);
   const pages = await getChangedPages(from, to);
 
@@ -49,7 +51,7 @@ async function main() {
       (event) => event.event_type === "completed"
     );
 
-    if (!task && !isCompletedFromTodoistEvent) {
+    if (!task && !isCompletedFromTodoistEvent && !done) {
       console.log("Adding task", {
         content: title,
         description: note,

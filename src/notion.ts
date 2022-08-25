@@ -9,11 +9,20 @@ export async function getChangedPages(from: Date, to: Date) {
   const response = await notion.databases.query({
     database_id: env.NOTION_DATABASE_ID,
     filter: {
-      last_edited_time: {
-        after: from.toISOString(),
-        before: to.toISOString(),
-      },
-      timestamp: "last_edited_time",
+      and: [
+        {
+          last_edited_time: {
+            on_or_after: from.toISOString(),
+          },
+          timestamp: "last_edited_time",
+        },
+        {
+          last_edited_time: {
+            before: to.toISOString(),
+          },
+          timestamp: "last_edited_time",
+        },
+      ],
     },
   });
 
