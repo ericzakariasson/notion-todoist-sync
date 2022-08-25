@@ -25,4 +25,5 @@ export const env = getEnvironment([
   "NOTION_DATABASE_ID",
   "TODOIST_TOKEN",
   "TODOIST_PROJECT_ID",
+  "SYNC_INTERVAL_MINUTES",
 ] as const);

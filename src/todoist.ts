@@ -1,5 +1,8 @@
-import { isThisMinute } from "date-fns";
+import { TodoistApi } from "@doist/todoist-api-typescript";
+import { addMinutes, isWithinInterval } from "date-fns";
 import { env } from "./environment";
+
+export const todoist = new TodoistApi(env.TODOIST_TOKEN);
 
 export interface TodoistActivityLogEvent {
   id: number;
@@ -24,7 +27,7 @@ export interface TodoistActivityLogEventResponse {
   events: TodoistActivityLogEvent[];
 }
 
-export async function getActivityLogEvents() {
+export async function getActivityLogEvents(from: Date, to: Date) {
   const parameters = new URLSearchParams({
     parent_project_id: env.TODOIST_PROJECT_ID,
     object_type: "item",
@@ -44,7 +47,10 @@ export async function getActivityLogEvents() {
   const data = json as unknown as TodoistActivityLogEventResponse;
 
   const events = data.events.filter((event) =>
-    isThisMinute(new Date(event.event_date))
+    isWithinInterval(new Date(event.event_date), {
+      start: from,
+      end: to,
+    })
   );
 
   return events;

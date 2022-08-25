@@ -1,5 +1,4 @@
-import { TodoistApi } from "@doist/todoist-api-typescript";
-import { startOfMinute } from "date-fns";
+import { addMinutes } from "date-fns";
 import "dotenv/config";
 import { env } from "./environment";
 import {
@@ -8,7 +7,7 @@ import {
   getPageProperties,
   updatePageCheckboxToChecked,
 } from "./notion";
-import { getActivityLogEvents } from "./todoist";
+import { getActivityLogEvents, todoist } from "./todoist";
 
 /**
  * TODO:
@@ -18,20 +17,20 @@ import { getActivityLogEvents } from "./todoist";
  * - Notion change data capture by diffing?
  */
 
-const NOW = new Date();
-const CURRENT_MINUTE = startOfMinute(NOW);
-
-const todoist = new TodoistApi(env.TODOIST_TOKEN);
+const MINUTES = Number(env.SYNC_INTERVAL_MINUTES);
 
 async function main() {
+  const NOW = new Date();
+
   const activeTodoistTasks = await todoist.getTasks({
     projectId: Number(env.TODOIST_PROJECT_ID),
   });
 
-  const events = await getActivityLogEvents();
-  console.log(events);
+  const from = addMinutes(NOW, -MINUTES);
+  const to = NOW;
 
-  const pages = await getChangedPages(CURRENT_MINUTE);
+  const events = await getActivityLogEvents(from, to);
+  const pages = await getChangedPages(from, to);
 
   const completedTaskEvents = events.filter(
     (event) => event.event_type === "completed"

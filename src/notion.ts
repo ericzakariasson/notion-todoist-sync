@@ -5,13 +5,13 @@ const notion = new Client({
   auth: env.NOTION_TOKEN,
 });
 
-export async function getChangedPages(editedAt: Date) {
+export async function getChangedPages(from: Date, to: Date) {
   const response = await notion.databases.query({
     database_id: env.NOTION_DATABASE_ID,
     filter: {
       last_edited_time: {
-        // remove seconds from iso string to only fetch minute
-        equals: editedAt.toISOString().substring(0, 16),
+        after: from.toISOString(),
+        before: to.toISOString(),
       },
       timestamp: "last_edited_time",
     },
