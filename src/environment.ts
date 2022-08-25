@@ -19,3 +19,10 @@ export function getEnvironment<T extends readonly string[]>(keys: T) {
 
   return variables as Record<VariableName, string>;
 }
+
+export const env = getEnvironment([
+  "NOTION_TOKEN",
+  "NOTION_DATABASE_ID",
+  "TODOIST_TOKEN",
+  "TODOIST_PROJECT_ID",
+] as const);
